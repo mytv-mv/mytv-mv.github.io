@@ -1,231 +1,367 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MYTV APP</title>
-  
-  <!-- Plyr CSS -->
-  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
-  <!-- Plyr JS -->
-  <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-  <!-- HLS.js -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #222;
-      color: white;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 90%;
-      max-width: 900px;
-    }
-    /* Updated and stylish player container */
-    .player-container {
-      width: 100%;
-      max-width: 800px;
-      background: linear-gradient(135deg, #1c1c1c, #000);
-      border: 2px solid #444;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 12px 24px rgba(0,0,0,0.8);
-      margin-bottom: 20px;
-      position: relative;
-      padding: 5px;
-    }
-    /* Plyr Some additional styling of the container */
-    .plyr__video-wrapper video {
-      border-radius: 15px;
-    }
-    /* Channel list design as before */
-    .channel-list-wrapper {
-      width: 100%;
-      overflow-x: auto;
-      white-space: nowrap;
-      margin-top: 20px;
-      padding: 10px;
-      border: 2px solid #fff;
-      border-radius: 10px;
-      background: #333;
-      display: flex;
-    }
-    .channel-list {
-      display: flex;
-      flex-wrap: nowrap;
-      justify-content: center;
-      align-items: center;
-    }
-    .channel {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      background: #444;
-      margin: 5px;
-      padding: 10px;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      transition: all 0.3s ease;
-      flex-shrink: 0;
-    }
-    .channel:hover {
-      background: #555;
-      transform: scale(1.2);
-    }
-    .channel img {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      transition: transform 0.3s ease;
-    }
-    .channel-list-wrapper::-webkit-scrollbar {
-      height: 8px;
-    }
-    .channel-list-wrapper::-webkit-scrollbar-thumb {
-      background: #555;
-      border-radius: 5px;
-    }
-    .channel-list-wrapper::-webkit-scrollbar-track {
-      background: #333;
-    }
-  </style>
-  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MYTV</title>
+        <link rel="icon" href="icon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&family=Roboto+Slab&family=DM+Sans&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #2c2c2c, #121212);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: 'Roboto Slab', serif;
+            color: #e0e0e0;
+        }
+
+        .channels-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .channel-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            width: 250px;
+            height: 380px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .channel-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .channel-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+
+        .channel-content {
+            padding: 15px;
+        }
+
+        .channel-name {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .play-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #3c3c3c, #212121);
+            border: none;
+            color: rgb(255, 255, 255);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            outline: none;
+            font-size: 1rem;
+            margin: 10px auto 0;
+            width: 50px;
+            height: 50px;
+            position: relative;
+        }
+
+        .play-button img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .play-button:hover {
+            background: #e64a19;
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 10px 20px;
+            font-family: 'Roboto Slab', serif;
+            font-size: 0.9rem;
+        }
+
+        .telegram-frame {
+            display: inline-block;
+            padding: 5px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .telegram-frame:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .telegram-frame img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .channels-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .channel-box {
+                width: 100%;
+                max-width: 300px;
+                margin-bottom: 20px;
+            }
+
+            header {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                font-size: 1.2rem;
+            }
+
+            .play-button {
+                width: 45px;
+                height: 45px;
+                font-size: 0.9rem;
+            }
+
+            .channel-name {
+                font-size: 1rem;
+            }
+
+            footer {
+                font-size: 0.8rem;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .contact p {
+                margin-bottom: 10px;
+            }
+        }
+
+        .telegram-frame {
+            background: none;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 </head>
 <body>
 
-  <div class="container">
-    <!-- Updated stylish Plyr প্লেয়ার কন্টেইনার -->
-    <div class="player-container">
-      <video id="videoPlayer" playsinline controls></video>
-    </div>
+<header>
+    <img src="logo.png" alt="MYTV" style="max-width: 200px; height: auto;">
+</header>
+
+<div class="channels-container">
+    <!-- Channel Boxes -->
+    <script>
+        const channels = [
+            { name: "Dhaaris TV", image: "https://i.imgur.com/tGVjeJI.png", url: "https://www.youtube.com/watch?v=g_NKEtFnvVc", isYouTube: true },
+            { name: "TVM", image: "https://i.imgur.com/l7wMwxy.jpeg", url: "https://customer-ujex1meek7koqd9x.cloudflarestream.com/9e93379c0d46ee588b99263d95bd9c42/manifest/video.m3u8" },
+            { name: "SSTV", image: "https://i.imgur.com/IJmDfU4.jpeg", url: "https://sstv.ssplay.mv/hls/sstv-live/index.m3u8" },
+            { name: "MMTV", image: "https://i.imgur.com/AY6GgJY.jpeg", url: "https://sendlive.online/hls/mmtv.m3u8" },
+            { name: "Raajje TV", image: "https://i.imgur.com/BWgH30C.png", url: "https://stream.raajje.mv/live/rtv_live/index.m3u8" },
+            { name: "Channel 13", image: "https://i.imgur.com/Qji4Bam.png", url: "https://stream.theyraonline.com/live/channel13@live/index.m3u8" },
+            { name: "Munnaaru TV", image: "https://i.imgur.com/RLQRQjo.jpeg", url: "https://customer-ujex1meek7koqd9x.cloudflarestream.com/6a46f90ca384c7419efdbef3ff1892a9/manifest/video.m3u8" },
+            { name: "YES TV", image: "https://i.imgur.com/m3DIaWz.jpeg", url: "https://customer-ujex1meek7koqd9x.cloudflarestream.com/4f0b316cdb0fbb7f8ca93860ed11d38b/manifest/video.m3u8" },
+            { name: "PSM News", image: "https://i.imgur.com/wzblQLO.jpeg", url: "https://customer-ujex1meek7koqd9x.cloudflarestream.com/21262545317dadfa20dab4f9bd37c7c2/manifest/video.m3u8" },
+            
+        ];
     
-    <!-- পূর্বের মত চ্যানেল লিস্ট (লোগো) -->
-    <div class="channel-list-wrapper">
-      <div class="channel-list" id="channelList">
-        <!-- আনলিমিটেড চ্যানেল এখানে যুক্ত হবে -->
-      </div>
-    </div>
-  </div>
-  
-  <script>
-    // Plyr ইনিশিয়ালাইজেশন
-    const player = new Plyr('#videoPlayer', {
-      controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen'],
-      settings: ['quality', 'speed']
-    });
-    
-    // HLS/TS স্ট্রিমিং লোড করার ফাংশন
-    function loadVideo(sourceUrl) {
-      const video = document.getElementById('videoPlayer');
-      if (Hls.isSupported()) {
-        if (window.hls) {
-          window.hls.destroy();
+        channels.forEach(channel => {
+            document.write(`
+                <div class="channel-box" onclick="playChannel('${channel.url}', ${channel.isYouTube || false}, '${channel.name}')">
+                    <img class="channel-image" src="${channel.image}" alt="${channel.name}">
+                    <div class="channel-content">
+                        <div class="channel-name">${channel.name}</div>
+                    </div>
+                </div>
+            `);
+        });
+
+        const channelsContainer = document.getElementById('channels-container');
+        channels.forEach(channel => {
+            const channelBox = document.createElement('div');
+            channelBox.classList.add('channel-box');
+            channelBox.setAttribute('onclick', `playChannel('${channel.url}', ${channel.isYouTube || false}, '${channel.name}')`);
+            channelBox.innerHTML = `
+                <img class="channel-image" src="${channel.image}" alt="${channel.name}">
+                <div class="channel-content">
+                    <div class="channel-name">${channel.name}</div>
+                </div>
+            `;
+            channelsContainer.appendChild(channelBox);
+        });
+
+        let selectedIndex = 0;
+
+        function highlightChannel(index) {
+            const boxes = document.querySelectorAll('.channel-box');
+            boxes.forEach((box, i) => {
+                box.style.transform = i === index ? 'scale(1.1)' : 'scale(0.9)';
+                box.style.boxShadow = i === index ? '0 8px 20px rgba(0, 0, 0, 0.6)' : '0 5px 15px rgba(0, 0, 0, 0.4)';
+            });
         }
-        const hls = new Hls();
-        window.hls = hls;
-        hls.loadSource(sourceUrl);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-          player.play();
+
+        function playChannel(url, isYouTube, channelName) {
+            console.log(`Playing ${channelName} from URL: ${url}`);
+            // Implement play logic
+        }
+
+        document.addEventListener('keydown', (event) => {
+            const boxes = document.querySelectorAll('.channel-box');
+            const rowLength = Math.floor(window.innerWidth / 270);
+
+            if (event.key === 'ArrowRight') {
+                if (selectedIndex % rowLength !== rowLength - 1) {
+                    selectedIndex++;
+                }
+            } else if (event.key === 'ArrowLeft') {
+                if (selectedIndex % rowLength !== 0) {
+                    selectedIndex--;
+                }
+            } else if (event.key === 'ArrowDown') {
+                if (selectedIndex + rowLength < boxes.length) {
+                    selectedIndex += rowLength;
+                }
+            } else if (event.key === 'ArrowUp') {
+                if (selectedIndex - rowLength >= 0) {
+                    selectedIndex -= rowLength;
+                }
+            }
+
+            highlightChannel(selectedIndex);
         });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = sourceUrl;
-        video.addEventListener('loadedmetadata', function() {
-          player.play();
+
+        highlightChannel(selectedIndex);
+
+        function playChannel(url, isYouTube, channelName) {
+            const videoPlayer = document.getElementById('player-overlay');
+            const video = document.getElementById('video');
+            const youtubeFrame = document.getElementById('youtube-frame');
+
+            if (!videoPlayer || !video || !youtubeFrame) return;
+
+            videoPlayer.style.visibility = 'visible';
+            videoPlayer.style.opacity = '1';
+
+            if (isYouTube) {
+                video.style.display = 'none';
+                youtubeFrame.style.display = 'block';
+                try {
+                    const videoId = new URL(url).searchParams.get('v');
+                    youtubeFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+                } catch (e) {
+                    console.error("Invalid YouTube URL:", e);
+                }
+            } else {
+                youtubeFrame.style.display = 'none';
+                video.style.display = 'block';
+
+                if (Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(url);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                        video.play().then(() => {
+                            requestFullScreen(video);
+                        }).catch(err => console.error("Playback failed:", err));
+                    });
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = url;
+                    video.play().then(() => {
+                        requestFullScreen(video);
+                    }).catch(err => console.error("Playback failed:", err));
+                }
+            }
+
+            function requestFullScreen(video) {
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } else if (video.webkitRequestFullscreen) {
+                    video.webkitRequestFullscreen();
+                } else if (video.mozRequestFullScreen) {
+                    video.mozRequestFullScreen();
+                } else if (video.msRequestFullscreen) {
+                    video.msRequestFullscreen();
+                }
+            }
+        }
+
+        function closePlayer() {
+            const videoPlayer = document.getElementById('player-overlay');
+            const video = document.getElementById('video');
+            const youtubeFrame = document.getElementById('youtube-frame');
+
+            if (video) {
+                video.pause();
+                video.src = "";
+            }
+            if (youtubeFrame) {
+                youtubeFrame.src = "";
+            }
+
+            if (videoPlayer) {
+                videoPlayer.style.opacity = '0';
+                videoPlayer.style.visibility = 'hidden';
+            }
+        }
+
+        // Add event listener for the Escape key to close the player
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closePlayer();
+            }
         });
-      } else {
-        console.error("HLS is not supported in this browser.");
-      }
-    }
-    
-    // চ্যানেল পরিবর্তনের জন্য ফাংশন
-    function changeChannel(channelURL) {
-      loadVideo(channelURL);
-    }
-    
-    // Channel array to add unlimited channels
-    const channels = [
-      { url: "https://customer-ujex1meek7koqd9x.cloudflarestream.com/9e93379c0d46ee588b99263d95bd9c42/manifest/video.m3u8", img: "https://i.imgur.com/l7wMwxy.jpeg" },
-      { url: "https://customer-ujex1meek7koqd9x.cloudflarestream.com/21262545317dadfa20dab4f9bd37c7c2/manifest/video.m3u8", img: "https://i.imgur.com/wzblQLO.jpeg" },
-      { url: "https://customer-ujex1meek7koqd9x.cloudflarestream.com/4f0b316cdb0fbb7f8ca93860ed11d38b/manifest/video.m3u8", img: "https://i.imgur.com/m3DIaWz.jpeg" },
-      { url: "https://sendlive.online/hls/mmtv.m3u8", img: "https://i.imgur.com/AY6GgJY.jpeg" },
-      { url: "https://sstv.ssplay.mv/hls/sstv-live/index.m3u8", img: "https://i.imgur.com/IJmDfU4.jpeg" },
-      { url: "http://stream.raajje.mv/live/rtv_live/index.m3u8", img: "https://i.imgur.com/BWgH30C.png" },
-      { url: "https://stream.theyraonline.com/live/channel13@live/index.m3u8", img: "https://i.imgur.com/Qji4Bam.png" },
-      { url: "https://live.maldivestv.mv/hls/stream/index.m3u8", img: "https://i.imgur.com/2OMbtJ4.png" },
-      { url: "https://live-hls-web-aje.getaj.net/AJE/04.m3u8", img: "https://i.imgur.com/bd5YI3j.png" },
-      { url: "https://d2vnbkvjbims7j.cloudfront.net/containerA/LTN/playlist.m3u8?v=1", img: "https://i.imgur.com/VUyNhDg.png" },
-      
-    ];
-    
-    const channelListDiv = document.getElementById('channelList');
-    channels.forEach(channel => {
-      const channelDiv = document.createElement('div');
-      channelDiv.classList.add('channel');
-      channelDiv.innerHTML = `<img src="${channel.img}" alt="Channel">`;
-      channelDiv.onclick = () => changeChannel(channel.url);
-      channelListDiv.appendChild(channelDiv);
-    });
-    
-    // মাউস ও টাচ স্ক্রলিং (মোবাইল এবং ডেস্কটপ)
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-    const slider = document.querySelector('.channel-list-wrapper');
-    slider.addEventListener('mousedown', (e) => {
-      isDown = true;
-      slider.classList.add('active');
-      startX = e.pageX - slider.offsetLeft;
-      scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('mouseleave', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mouseup', () => {
-      isDown = false;
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mousemove', (e) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - startX) * 2;
-      slider.scrollLeft = scrollLeft - walk;
-    });
-    slider.addEventListener('touchstart', (e) => {
-      startX = e.touches[0].clientX;
-      scrollLeft = slider.scrollLeft;
-    });
-    slider.addEventListener('touchmove', (e) => {
-      const x = e.touches[0].clientX;
-      const walk = (x - startX) * 2;
-      slider.scrollLeft = scrollLeft - walk;
-    });
-    
-    // প্রথম ভিডিও লোড (ডিফল্ট চ্যানেল)
-    window.addEventListener('load', () => {
-      if(channels.length > 0) {
-        changeChannel(channels[0].url);
-      }
-    });
-  </script>
-  
+    </script>    
+</div>
+
+<!-- Video Player Overlay -->
+<div id="player-overlay" style="visibility: hidden; opacity: 0; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; justify-content:center; align-items:center; z-index:999; transition: visibility 0s, opacity 0.3s;">
+        <iframe id="youtube-frame" style="display:none; width:90%; height:90%;" frameborder="0" allowfullscreen></iframe>
+        <video id="video" controls style="width:90%; height:90%;"></video>
+        <button onclick="closePlayer()" style="position:absolute; top:10px; right:10px; background:rgb(32, 32, 32); border:none; border-radius:50%; padding:10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);">
+            <img src="minimize-2.svg" alt="Close" style="width:24px; height:24px;">
+        </button>
+</div>
+
+<footer>
+    <div class="contact">
+        <p>&copy; 2025 MYTV. All rights reserved.</p>
+    </div>
+    <a href="https://t.me/mytv" target="_blank" class="telegram-frame">
+        <img src="https://i.imgur.com/pPAgMfl.png" alt="Telegram Channel">
+    </a>
+</footer>
+
 </body>
 </html>
-
-
