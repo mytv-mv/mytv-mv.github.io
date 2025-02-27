@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MYTV APP</title>
+  
+  <!-- Plyr CSS -->
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+  <!-- Plyr JS -->
+  <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+  <!-- HLS.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #222;
+      color: white;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 90%;
+      max-width: 900px;
+    }
+    /* Updated and stylish player container */
+    .player-container {
+      width: 100%;
+      max-width: 800px;
+      background: linear-gradient(135deg, #1c1c1c, #000);
+      border: 2px solid #444;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.8);
+      margin-bottom: 20px;
+      position: relative;
+      padding: 5px;
+    }
+    /* Plyr Some additional styling of the container */
+    .plyr__video-wrapper video {
+      border-radius: 15px;
+    }
+    /* Channel list design as before */
+    .channel-list-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      white-space: nowrap;
+      margin-top: 20px;
+      padding: 10px;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      background: #333;
+      display: flex;
+    }
+    .channel-list {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+      align-items: center;
+    }
+    .channel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: #444;
+      margin: 5px;
+      padding: 10px;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+    .channel:hover {
+      background: #555;
+      transform: scale(1.2);
+    }
+    .channel img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+    .channel-list-wrapper::-webkit-scrollbar {
+      height: 8px;
+    }
+    .channel-list-wrapper::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 5px;
+    }
+    .channel-list-wrapper::-webkit-scrollbar-track {
+      background: #333;
+    }
+  </style>
+  
+</head>
+<body>
+
+  <div class="container">
+    <!-- Updated stylish Plyr প্লেয়ার কন্টেইনার -->
+    <div class="player-container">
+      <video id="videoPlayer" playsinline controls></video>
+    </div>
+    
+    <!-- পূর্বের মত চ্যানেল লিস্ট (লোগো) -->
+    <div class="channel-list-wrapper">
+      <div class="channel-list" id="channelList">
+        <!-- আনলিমিটেড চ্যানেল এখানে যুক্ত হবে -->
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Plyr ইনিশিয়ালাইজেশন
+    const player = new Plyr('#videoPlayer', {
+      controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen'],
+      settings: ['quality', 'speed']
+    });
+    
+    // HLS/TS স্ট্রিমিং লোড করার ফাংশন
+    function loadVideo(sourceUrl) {
+      const video = document.getElementById('videoPlayer');
+      if (Hls.isSupported()) {
+        if (window.hls) {
+          window.hls.destroy();
+        }
+        const hls = new Hls();
+        window.hls = hls;
+        hls.loadSource(sourceUrl);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+          player.play();
+        });
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = sourceUrl;
+        video.addEventListener('loadedmetadata', function() {
+          player.play();
+        });
+      } else {
+        console.error("HLS is not supported in this browser.");
+      }
+    }
+    
+    // চ্যানেল পরিবর্তনের জন্য ফাংশন
+    function changeChannel(channelURL) {
+      loadVideo(channelURL);
+    }
+    
+    // Channel array to add unlimited channels
+    const channels = [
+      { url: "https://customer-ujex1meek7koqd9x.cloudflarestream.com/9e93379c0d46ee588b99263d95bd9c42/manifest/video.m3u8", img: "https://i.imgur.com/l7wMwxy.jpeg" },
+      { url: "https://customer-ujex1meek7koqd9x.cloudflarestream.com/21262545317dadfa20dab4f9bd37c7c2/manifest/video.m3u8", img: "https://i.imgur.com/wzblQLO.jpeg" },
+      { url: "https://customer-ujex1meek7koqd9x.cloudflarestream.com/4f0b316cdb0fbb7f8ca93860ed11d38b/manifest/video.m3u8", img: "https://i.imgur.com/m3DIaWz.jpeg" },
+      { url: "https://sendlive.online/hls/mmtv.m3u8", img: "https://i.imgur.com/AY6GgJY.jpeg" },
+      { url: "https://sstv.ssplay.mv/hls/sstv-live/index.m3u8", img: "https://i.imgur.com/IJmDfU4.jpeg" },
+      { url: "http://stream.raajje.mv/live/rtv_live/index.m3u8", img: "https://i.imgur.com/BWgH30C.png" },
+      { url: "https://stream.theyraonline.com/live/channel13@live/index.m3u8", img: "https://i.imgur.com/Qji4Bam.png" },
+      { url: "https://live.maldivestv.mv/hls/stream/index.m3u8", img: "https://i.imgur.com/2OMbtJ4.png" },
+      { url: "https://live-hls-web-aje.getaj.net/AJE/04.m3u8", img: "https://i.imgur.com/bd5YI3j.png" },
+      { url: "https://d2vnbkvjbims7j.cloudfront.net/containerA/LTN/playlist.m3u8?v=1", img: "https://i.imgur.com/VUyNhDg.png" },
+      
+    ];
+    
+    const channelListDiv = document.getElementById('channelList');
+    channels.forEach(channel => {
+      const channelDiv = document.createElement('div');
+      channelDiv.classList.add('channel');
+      channelDiv.innerHTML = `<img src="${channel.img}" alt="Channel">`;
+      channelDiv.onclick = () => changeChannel(channel.url);
+      channelListDiv.appendChild(channelDiv);
+    });
+    
+    // মাউস ও টাচ স্ক্রলিং (মোবাইল এবং ডেস্কটপ)
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    const slider = document.querySelector('.channel-list-wrapper');
+    slider.addEventListener('mousedown', (e) => {
+      isDown = true;
+      slider.classList.add('active');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mouseleave', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mouseup', () => {
+      isDown = false;
+      slider.classList.remove('active');
+    });
+    slider.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - slider.offsetLeft;
+      const walk = (x - startX) * 2;
+      slider.scrollLeft = scrollLeft - walk;
+    });
+    slider.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('touchmove', (e) => {
+      const x = e.touches[0].clientX;
+      const walk = (x - startX) * 2;
+      slider.scrollLeft = scrollLeft - walk;
+    });
+    
+    // প্রথম ভিডিও লোড (ডিফল্ট চ্যানেল)
+    window.addEventListener('load', () => {
+      if(channels.length > 0) {
+        changeChannel(channels[0].url);
+      }
+    });
+  </script>
+  
+</body>
+</html>
+
+
